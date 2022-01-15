@@ -1,10 +1,30 @@
+# docker-compose.yml
+version: '2'
 services:
+  teamspeak:
+    image: teamspeak
+    restart: always
+    ports:
+      - 9987:9987/udp
+      - 10011:10011
+      - 30033:30033
+    environment:
+      TS3SERVER_LICENSE: accept
+    networks:
+      mynetwork:
+        aliases:
+          - teamspeak.docker.local
+
   sinusbot:
-    web:
     image: sinusbot/docker
-    labels:
-      shipyard.route: '/'
-      shipyard.primary-route: 'true'
-    build: .
+    restart: always
     ports:
       - 8087:8087
+    volumes:
+      - /opt/sinusbot/scripts:/opt/sinusbot/scripts
+      - /opt/sinusbot/data:/opt/sinusbot/data
+    networks:
+     - mynetwork
+networks:
+    mynetwork:
+        driver: bridge
